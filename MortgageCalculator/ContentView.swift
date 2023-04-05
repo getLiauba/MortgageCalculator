@@ -33,7 +33,7 @@ struct ContentView: View {
         self.price = 1000000.00
         self.downPayment = 50000.00
         self.loanLength = 25.00
-        self.intrestRate = 5.0
+        self.intrestRate = 4.0
         self.monthlyPayment = 5000.00
         self.yearlyIncome = 10000.00
         
