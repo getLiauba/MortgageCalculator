@@ -7,16 +7,29 @@
 
 import SwiftUI
 
+enum InfoType {
+    case price
+    case downPayment
+    case loanLength
+    case intrestRate
+}
+
+
 struct SliderView: View {
     
-    @Binding var displayValue: Double
+    @State var displayValue: Double
     var label: String
     var maxVal: Int
     var minVal: Int
     var step: Int
-    var lightPurple = Color("LightPurple")
     var isCurrancy:Bool
     var endingText: String
+    var infoType: InfoType
+    
+    
+    var lightPurple = Color("LightPurple")
+    @EnvironmentObject var viewModel: ViewModel
+    
     
     var body: some View {
         
@@ -41,6 +54,18 @@ struct SliderView: View {
                 .padding(.horizontal,30)
                 .accentColor(.green)
                 .opacity(0.5)
+                .onChange(of: displayValue) { newValue in
+                    if infoType == .price {
+                        viewModel.setPrice(price: newValue)
+                    } else if infoType == .intrestRate {
+                        viewModel.setInrestRate(intrestRate: newValue)
+                    } else if infoType == .loanLength {
+                        viewModel.setLoanLength(loanLength: newValue)
+                    } else if infoType == .downPayment {
+                        viewModel.setDownPayment(downPayment: newValue)
+                    }
+                }
+
         }
     }
     
@@ -63,8 +88,3 @@ struct SliderView: View {
     }
 }
 
-//struct SliderView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SliderView(displayValue: 1000000, label: "Price", maxVal: 2000000, minVal: 10000, step: 10000,isCurrancy: true)
-//    }
-//}

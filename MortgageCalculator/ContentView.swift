@@ -12,107 +12,85 @@ struct ContentView: View {
     var lightPurple = Color("LightPurple")
     var darkPurple = Color("DarkPurple")
     var background = Color("Background")
-    
-//    @State var price = 1000000.00
-//    @State var downPayment = 10000.00
-//    @State var loanLength = 25.0
-//    @State var intrestRate = 5.0
-//    @State var monthlyPayment = 0.0
-//    @State var yearlyIncome: Double
-    
-    @State var price:Double
-    @State var downPayment:Double
-    @State var loanLength:Double
-    @State var intrestRate:Double
-    @State var monthlyPayment:Double
-    @State var yearlyIncome: Double
-    
-    
-    init() {
-        
-        self.price = 1000000.00
-        self.downPayment = 50000.00
-        self.loanLength = 25.00
-        self.intrestRate = 4.0
-        self.monthlyPayment = 5000.00
-        self.yearlyIncome = 10000.00
-        
-        self.monthlyPayment = calculateMortgagePayment(price: price, downPayment: downPayment, loanLength: loanLength, interestRate: intrestRate)
-        self.yearlyIncome = calculateIncome(monthlyPayment: monthlyPayment)
-        
-        
-    }
+    @EnvironmentObject var viewModel: ViewModel
+
     
     var body: some View {
         
         ZStack {
-            // background
-            //  .ignoresSafeArea()
+
             LinearGradient(colors: [lightPurple,darkPurple,lightPurple], startPoint: .topTrailing, endPoint: .bottomLeading)
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.9)
             VStack {
-                VStack {
-                    Text(NumberFormatter.localizedString(from: NSNumber(value: calculateMortgagePayment(price: price, downPayment: downPayment, loanLength: loanLength, interestRate: intrestRate)), number: .currency))
-                        .font(.largeTitle.bold())
-                    + Text("/Month")
-                        .font(.headline)
-                        .fontWeight(.medium)
-                    Text("Your gross income would need to be \(calculateIncome(monthlyPayment: monthlyPayment)) to afford this mortgage")
-                        .multilineTextAlignment(.center)
-                        .padding(.top,40)
-                        .padding(.all)
-                        .font(.title2)
-                    
-                        
-                }
+                Display(monthlyPayment: viewModel.mortgage.monthlyPayment)
                 Spacer()
                 VStack {
-                    SliderView(displayValue: $price, label: "Price", maxVal: 3000000, minVal: 50000, step: 10000, isCurrancy: true,endingText: "")
+                    SliderView(displayValue: 500000.00,label: "Price", maxVal: 3000000, minVal: 50000, step: 10000, isCurrancy: true,endingText: "",infoType: .price)
                         .padding(.bottom,30)
                     
-                    SliderView(displayValue: $downPayment, label: "Down Payment", maxVal:  1000000, minVal: 0, step: 10000, isCurrancy: true,endingText: "")
+                    SliderView(displayValue: 50000.00,label: "Down Payment", maxVal:  1000000, minVal: 0, step: 5000, isCurrancy: true,endingText: "",infoType: .downPayment)
                         .padding(.bottom,30)
-                    SliderView(displayValue: $loanLength, label: "Length of Loan", maxVal:  60, minVal: 0, step: 1, isCurrancy: false,endingText: "Years")
+                    SliderView(displayValue: 25.00,label: "Length of Loan", maxVal:  60, minVal: 0, step: 1, isCurrancy: false,endingText: "Years",infoType: .loanLength)
                         .padding(.bottom,30)
-                    SliderView(displayValue: $intrestRate, label: "Intrest Rate", maxVal:  30, minVal: 0, step: 1, isCurrancy: false,endingText: "%")
+                    SliderView(displayValue: 5,label: "Intrest Rate", maxVal:  30, minVal: 0, step: 1, isCurrancy: false,endingText: "%",infoType: .intrestRate)
                 }
             }
         }
     }
 }
 
-func calculateMortgagePayment(price: Double, downPayment: Double, loanLength: Double, interestRate: Double) -> Double {
-    let loanAmount = price - downPayment
-    let monthlyInterestRate = interestRate / 1200.0 // 12 months * 100%
-    let numberOfPayments = loanLength * 12.0
-    let numerator = loanAmount * monthlyInterestRate * pow((1 + monthlyInterestRate), numberOfPayments)
-    let denominator = pow((1 + monthlyInterestRate), numberOfPayments) - 1
-    let monthlyPayment = numerator / denominator
+
+struct Display: View {
+    var lightPurple = Color("LightPurple")
+    @State var monthlyPayment: Double
+    @EnvironmentObject var viewModel: ViewModel
     
-    return monthlyPayment
-}
 
+       
 
-func calculateIncome(monthlyPayment: Double) -> Double{
     
-    let yearlyPayment = monthlyPayment * 12
-    
-    let onePercent = (yearlyPayment / 32)
-    
-    return onePercent * 100
-}
+    var body: some View {
+        
+        var income = Text("\(NumberFormatter.localizedString(from: viewModel.mortgage.yearlyIncome as NSNumber, number: .currency))")
+        var monthlyPayments = Text("\(NumberFormatter.localizedString(from: viewModel.mortgage.monthlyPayment as NSNumber, number: .currency))")
+        
+        ZStack(alignment: .top) {
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: 350,height: 250)
+                .foregroundColor(Color.gray.opacity(0.2))
+                
+            
+            VStack() {
+                
+                monthlyPayments
+                    .font(.largeTitle.bold())
+                + Text(" /Month")
+                    .font(.headline.bold())
+                
+                
+                
+                income
+                    .font(.largeTitle.bold())
+                    .padding(.top)
+                Text("Yearly income")
+                
+            }
+            .padding(.all,40)
+          
+        }
+        .padding(.top,45)
+        
 
 
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
 
 
-
-//        LinearGradient(colors: [lightPurple,darkPurple,lightPurple], startPoint: .topTrailing, endPoint: .bottomLeading)
-//            .edgesIgnoringSafeArea(.all)
-//            .opacity(0.9)
+struct ContentView_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        ContentView()
+            .environmentObject(ViewModel())
+    }
+}
