@@ -28,6 +28,7 @@ struct SliderView: View {
     
     
     var lightPurple = Color("LightPurple")
+    var sunsetOrange = Color("SunsetOrange")
     @EnvironmentObject var viewModel: ViewModel
     
     
@@ -52,8 +53,8 @@ struct SliderView: View {
             }
             Slider(value: $displayValue, in: Double(minVal)...Double(maxVal), step: Double.Stride(step))
                 .padding(.horizontal,30)
-                .accentColor(.green)
-                .opacity(0.5)
+                .accentColor(sunsetOrange)
+//                .opacity(0.5)
                 .onChange(of: displayValue) { newValue in
                     if infoType == .price {
                         viewModel.setPrice(price: newValue)

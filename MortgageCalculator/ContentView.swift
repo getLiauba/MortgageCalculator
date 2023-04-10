@@ -11,6 +11,12 @@ struct ContentView: View {
     
     var lightPurple = Color("LightPurple")
     var darkPurple = Color("DarkPurple")
+    
+    var columbiaBlue = Color("ColumbiaBlue")
+    var weldonBlue = Color("WeldonBlue")
+    var stormCloud = Color("StormCloud")
+    
+    
     var background = Color("Background")
     @EnvironmentObject var viewModel: ViewModel
 
@@ -19,7 +25,7 @@ struct ContentView: View {
         
         ZStack {
 
-            LinearGradient(colors: [lightPurple,darkPurple,lightPurple], startPoint: .topTrailing, endPoint: .bottomLeading)
+            LinearGradient(colors: [columbiaBlue,weldonBlue,columbiaBlue], startPoint: .topTrailing, endPoint: .bottomLeading)
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.9)
             VStack {
@@ -42,47 +48,39 @@ struct ContentView: View {
 
 
 struct Display: View {
+    var stormCloud = Color("StormCloud")
+    var beige = Color("Beige")
     var lightPurple = Color("LightPurple")
     @State var monthlyPayment: Double
     @EnvironmentObject var viewModel: ViewModel
     
-
-       
-
-    
     var body: some View {
         
-        var income = Text("\(NumberFormatter.localizedString(from: viewModel.mortgage.yearlyIncome as NSNumber, number: .currency))")
-        var monthlyPayments = Text("\(NumberFormatter.localizedString(from: viewModel.mortgage.monthlyPayment as NSNumber, number: .currency))")
+        let income = Text("\(NumberFormatter.localizedString(from: viewModel.mortgage.yearlyIncome as NSNumber, number: .currency))")
+        let monthlyPayments = Text("\(NumberFormatter.localizedString(from: viewModel.mortgage.monthlyPayment as NSNumber, number: .currency))")
         
         ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: 20)
+                .shadow(color: stormCloud,radius: 10)
                 .frame(width: 350,height: 250)
-                .foregroundColor(Color.gray.opacity(0.2))
-                
+                .foregroundColor(beige.opacity(0.3))
+//                .foregroundColor(stormCloud.opacity(0.45))
+//                .foregroundColor(Color.gray.opacity(0.6))
             
             VStack() {
-                
                 monthlyPayments
                     .font(.largeTitle.bold())
                 + Text(" /Month")
                     .font(.headline.bold())
                 
-                
-                
                 income
                     .font(.largeTitle.bold())
                     .padding(.top)
                 Text("Yearly income")
-                
             }
             .padding(.all,40)
-          
         }
         .padding(.top,45)
-        
-
-
     }
 }
 
